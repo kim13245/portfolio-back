@@ -1,16 +1,26 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserController } from '../user/controllers/user.controller';
-import { UserService } from '../user/services/user.service';
-import { User } from '../user/entities/user.entity';
+import { UserController } from './controllers/user.controller';
+import { User } from './entities/user.entity';
+
+import { UserService } from './services/user.service';
+import { UserServiceImpl } from './services/impl/user.service.impl';
+import { UserRepository } from './repositories/user.repository';
+import { UserRepositoryImpl } from './repositories/impl/user.repository.impl';
 
 @Module({
-  imports: [
-    // TypeORM이 User 엔티티를 인식하도록 등록
-    TypeOrmModule.forFeature([User]),
-  ],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService], // 다른 모듈에서 유저 서비스를 쓸 수 있도록 내보내기
+  providers: [
+    {
+      provide: UserRepository,
+      useClass: UserRepositoryImpl,
+    },
+    {
+      provide: UserService,
+      useClass: UserServiceImpl,
+    },
+  ],
+  exports: [UserService, UserRepository],
 })
 export class UserModule {}

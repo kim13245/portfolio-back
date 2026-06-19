@@ -1,8 +1,15 @@
-import { Controller } from '@nestjs/common';
-import { UserService } from '../services/user.service';
+import { Controller, Post, Body } from '@nestjs/common';
+import { UserService } from '../services/user.service'; 
+import { CreateUserDto } from '../dtos/create-user.dto';
 
 @Controller('user')
 export class UserController {
-  // 🤝 생성자 주입(DI)으로 서비스 레이어를 연결합니다.
+ 
   constructor(private readonly userService: UserService) {}
+
+  @Post('register')
+  async register(@Body() createUserDto: CreateUserDto) {
+    
+    return this.userService.register(createUserDto);
+  }
 }
